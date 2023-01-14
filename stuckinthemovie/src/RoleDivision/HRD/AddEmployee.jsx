@@ -84,7 +84,6 @@ const AddEmployee = () => {
                     <option value="Schedule">Schedule</option>
                     <option value="Operation">Operation</option>
                     <option value="Admin">Admin</option>
-                    <option value="test">test</option>
                 </select>
             </div>
 
