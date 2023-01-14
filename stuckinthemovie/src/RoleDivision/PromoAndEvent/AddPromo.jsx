@@ -4,6 +4,7 @@ import {useState, useEffect} from 'react'
 import { collection, deleteDoc, doc, addDoc, getDocs, getDoc, updateDoc,query,where} from "firebase/firestore"
 import DataTable from 'react-data-table-component';
 import Navbar from '../../navbar';
+import {v4} from 'uuid';
 
 const AddPromo = () => {
     const [memberships, setMemberships] = useState([]);
@@ -34,16 +35,17 @@ const AddPromo = () => {
       }, []);
 
       const PromoToMembership = async() =>{
-        await delay(4000)
         console.log('a');
         memberships.map(async e => {
             if(e.memberTier == tier){
                 await addDoc(dbMV,{
                     voucherId: promo[promo.length -1].id,
-                    MembershipId: e.id 
+                    MembershipId: e.id,
+                    Status: "Available"
                 })
             }
         })
+        window.location.reload()        
       }
 
       const newPromo = async() =>{
@@ -57,6 +59,7 @@ const AddPromo = () => {
             tier: tier
         })
         PromoToMembership()
+        
       }
 
 

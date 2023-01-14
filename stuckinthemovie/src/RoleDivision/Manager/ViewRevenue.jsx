@@ -13,6 +13,7 @@ const ViewRevenue = () => {
     const [month, setMonth] = useState(["January","February","Maret","April","Mei","Juni","july","Agustus","September","Oktober","November","Desember"])
 
     const dbE = collection(db, "TransactionHeader");
+    const dbM = collection(db, "OrderMovieHeader");
     const dbEx = collection(db, "FacilitiesAndEquipments");
 
     useEffect(() => {
@@ -24,10 +25,15 @@ const ViewRevenue = () => {
       } 
       const getData = async()=> {
         const data = await getDocs(dbE);
+        const dataMovie = await getDocs(dbM);
         const dataExpend = await getDocs(dbEx);
         const asd = data.docs.map((doc) => ({...doc.data(), id: doc.id}))
+        const Movie = dataMovie.docs.map((doc) => ({...doc.data(), id: doc.id}))
         const Expenddocs = dataExpend.docs.map((doc) => ({...doc.data(), id: doc.id}))
         asd.map(e => {
+          totalPrice[e.date.toDate().getMonth()] = Number(e.price) + totalPrice[e.date.toDate().getMonth()]
+        })
+        Movie.map(e => {
           totalPrice[e.date.toDate().getMonth()] = Number(e.price) + totalPrice[e.date.toDate().getMonth()]
         })
 

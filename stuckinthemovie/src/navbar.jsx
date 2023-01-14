@@ -123,7 +123,7 @@ const NavbarRole = () =>{
       <div className="div">
         <li><Link to='/Cafe/AddOrder'>AddOrder</Link></li>
         {/* <li><Link to='/Cafe/ViewCart'>ViewCart</Link></li> */}
-        <li><Link to='/Cafe/AddMembership'>AddMembership</Link></li>
+        {/* <li><Link to='/Cafe/AddMembership'>AddMembership</Link></li> */}
         <li><Link to='/Cafe/AddMembership'>AddMembership</Link></li>
         {EmployeeNavbar()}
       </div>
@@ -161,7 +161,7 @@ const NavbarRole = () =>{
     return (
       <div className="div">
         <li><Link to='/Schedule/ScheduleMovieView'>ScheduleMovieView</Link></li>
-        <li><Link to='/Schedule/GenerateScheduleMovie'>GenerateScheduleMovie</Link></li>
+        {/* <li><Link to='/Schedule/GenerateScheduleMovie'>GenerateScheduleMovie</Link></li> */}
         <li><Link to='/Schedule/ViewSchedule'>ViewSchedule</Link></li>
         {EmployeeNavbar()}
       </div>

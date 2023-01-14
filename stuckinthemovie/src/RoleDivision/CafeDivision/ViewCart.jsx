@@ -12,10 +12,11 @@ import { Link , useNavigate } from 'react-router-dom';
 const ViewCart= () => {
     const [cart, setCart] = useState([]);
     const [membership,setMembership] = useState("")
+    const [voucher,setVoucher] = useState("")
     const [payment,setPayment] = useState("")
 
     const arr = useLocation().state?.cart
-    const totalPrice = useLocation().state?.totalPrice
+    var totalPrice = useLocation().state?.totalPrice
     const dbTH = collection(db,"TransactionHeader")
     const dbTD = collection(db,"TransactionDetail")
     const dbK = collection(db,"Kitchen")
@@ -44,13 +45,7 @@ const ViewCart= () => {
     ];
 
     const commitTransaction = async() =>{
-        const id = v4()
-        await addDoc(dbTH,{
-            transactionId : id,
-            price : totalPrice,
-            date : Timestamp.now(),
-            payment : payment
-        })
+        let totalPricevalid = totalPrice
 
         if(membership != ""){
             const membershipDoc = doc(db,"Membership",membership);
@@ -59,11 +54,44 @@ const ViewCart= () => {
                 point: Number(getSnapMemberhsip.data().point + 5)
             })
         }
+
+        if(voucher != ""){
+            const docpro = query(collection(db,"MemberVoucher"),where("voucherId","==",voucher));
+            const arrayallvou = await getDocs(docpro);
+            const getarrayvoucher = arrayallvou.docs.map((doc) => ({...doc.data(),id: doc.id}))
+            const singlevoucher = doc(db,"Promo",voucher)
+            const getsinglevoucher = await getDoc(singlevoucher);
+            
+            getarrayvoucher.map(async e => {
+                
+                if(e.MembershipId == membership && e.Status == "Available" && getsinglevoucher.data().department == "Cafe"){
+                    const docsingle = doc(db,"MemberVoucher",e.id)
+                    
+                    totalPricevalid -= getsinglevoucher.data().decPrice
+                    if(totalPricevalid <= 0) totalPricevalid = 0
+                    await updateDoc(docsingle,{
+                        Status: "Used"
+                    })
+                    
+                    
+                }
+            })
+        }
+
+        
+        const id = v4()
+        await addDoc(dbTH,{
+            transactionId : id,
+            price : totalPricevalid,
+            date : Timestamp.now(),
+            payment : payment
+        })
+
         
 
         await addDoc(dbK,{
             transactionId : id,
-            price : totalPrice,
+            price : totalPricevalid,
             status: "NotDone"
         })
         
@@ -109,6 +137,14 @@ const ViewCart= () => {
             <input type='text' name="" id="" cols="30" rows="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={(event) => {
                     setMembership(event.target.value);
+                }}></input>
+            </div>
+
+            <div class="mb-6 w-full">
+            <label for="base-input" class="block mb-2 text-sm font-medium text-gray-900 ">Input Voucher</label>
+            <input type='text' name="" id="" cols="30" rows="10" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                onChange={(event) => {
+                    setVoucher(event.target.value);
                 }}></input>
             </div>
 
